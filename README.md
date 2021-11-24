@@ -3,14 +3,66 @@
 
 The files in this repository were used to configure the network depicted below.
 
-![TODO: Update the path with the name of your diagram](Images/diagram_filename.png)
+![TODO: Update the path with the name of your diagram](Diagrams/diagram1.png)
 
-These files have been tested and used to generate a live ELK deployment on Azure. They can be used to either recreate the entire deployment pictured above. Alternatively, select portions of the _____ file may be used to install only certain pieces of it, such as Filebeat.
+These files have been tested and used to generate a live ELK deployment on Azure. They can be used to either recreate the entire deployment pictured above. Alternatively, select portions of the Ansible file may be used to install only certain pieces of it, such as Filebeat.
 
-  - _TODO: Enter the playbook file._
-
+## ELK Server Ansible Playbook
+  ```diff
+  ---
+- name: Configure Elk VM with Docker
+  hosts: elk
+  remote_user: cspencer
+  become: true
+  tasks:
+  # Use apt module
+  - name: Install docker.io
+    apt:
+      update_cache: yes
+      force_apt_get: yes
+      name: docker.io
+      state: present
+   # Use apt module
+  - name: Install python3-pip
+    apt:
+      force_apt_get: yes
+      name: python3-pip
+      state: present
+   # Use pip module (It will default to pip3)
+  - name: Install Docker module
+    pip:
+      name: docker
+      state: present
+   # Use command module
+  - name: Increase virtual memory
+    command: sysctl -w vm.max_map_count=262144
+   # Use sysctl module
+  - name: Use more memory
+    sysctl:
+     name: vm.max_map_count
+     value: 262144
+     state: present
+     reload: yes
+   # Use docker_container module
+  - name: download and launch a docker elk container
+    docker_container:
+      name: elk
+      image: sebp/elk:761
+      state: started
+      restart_policy: always
+    # Please list the ports that ELK runs on
+      published_ports:
+      - 5601:5601
+      - 9200:9200
+      - 5044:5044
+   # Use systemd module
+  - name: Enable service docker on boot
+    systemd:
+      name: docker
+      enabled: yes
+```
 This document contains the following details:
-- Description of the Topologu
+- Description of the Topology
 - Access Policies
 - ELK Configuration
   - Beats in Use
@@ -22,22 +74,22 @@ This document contains the following details:
 
 The main purpose of this network is to expose a load-balanced and monitored instance of DVWA, the D*mn Vulnerable Web Application.
 
-Load balancing ensures that the application will be highly _____, in addition to restricting _____ to the network.
+Load balancing ensures that the application will be highly ```Available```, in addition to restricting _____ to the network.
 - _TODO: What aspect of security do load balancers protect? What is the advantage of a jump box?_
 
 Integrating an ELK server allows users to easily monitor the vulnerable VMs for changes to the _____ and system _____.
-- _TODO: What does Filebeat watch for?_
-- _TODO: What does Metricbeat record?_
+- ```Filebeat monitors system logs```
+- ```Metricbeat monitors and reports on ssytem metrics```
 
 The configuration details of each machine may be found below.
 _Note: Use the [Markdown Table Generator](http://www.tablesgenerator.com/markdown_tables) to add/remove values from the table_.
 
-| Name     | Function | IP Address | Operating System |
-|----------|----------|------------|------------------|
-| Jump Box | Gateway  | 10.0.0.1   | Linux            |
-| TODO     |          |            |                  |
-| TODO     |          |            |                  |
-| TODO     |          |            |                  |
+| Name    | Function   | IP Address | Operating System |
+|---------|------------|------------|------------------|
+| Jumpbox | Jump Host  | 10.1.0.4   | Linux            |
+| web-1   | Web Server | 10.1.0.8   | Linux            |
+| web-2   | Web Server | 10.1.0.9   | Linux            |
+| ELK     | ELK Server | 10.0.0.4   | Linux            |
 
 ### Access Policies
 
