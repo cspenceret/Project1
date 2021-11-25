@@ -23,9 +23,11 @@ Prior to deploying the ELK Server the ANSIBLE Container must be installed on the
 10.1.0.9 ansible_python_interpreter=/usr/bin/python3
 
 ```[elk]```
+
 10.0.0.4 ansible_python_interpreter=/usr/bin/python3
 
 ```[filebeat]```
+
 127.0.0.1
 
 ## Ansible Configuration
