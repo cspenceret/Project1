@@ -2,7 +2,7 @@
 
 ## Overview
 
-This procedure is to use Ansible playbook that installs Docker and configures a web VM's with the DVWA web app.
+This procedure is to use Ansible playbook that installs Docker and configures web VM's with the DVWA web app.
 
 ## Prerequistes
 
@@ -10,27 +10,24 @@ The procedure to install Ansible shall be completed and working as per the follo
 
 [Ansible Install Document](Ansible/Ansible_Install.md)
 
+Key to this is that the Ansible hosts files contains the IP addresses of the web servers unter the tag [webservers].
+
 ## Procedure
 
 Using gitBash SSH to your jump box, and connect to the Ansible container.
 
-If you stopped your container or exited it in the last activity, find it again using docker container list -a.
-
-- sudo docker container list -a to identify the container name.
+1. sudo docker container list -a to identify the container name.
 
 ```
 CONTAINER ID   IMAGE                          COMMAND                  CREATED       STATUS                        PORTS     NAMES
-d4292e3baeca   cyberxsecurity/dvwa            "/main.sh bash"          12 days ago   Exited (137) 12 days ago                blissful_bell
-3349cfca8742   cyberxsecurity/dvwa            "/main.sh bash"          12 days ago   Exited (0) 12 days ago                  sad_jackson
-35a08e09566c   cyberxsecurity/ansible         "/bin/sh -c /bin/bas…"   12 days ago   Exited (127) 50 seconds ago             elated_ptolemy
-aea2b29112ef   cyberxsecurity/ubuntu:bionic   "bash"                   13 days ago   Exited (0) 12 days ago 
+35a08e09566c   cyberxsecurity/ansible         "/bin/sh -c /bin/bas…"   12 days ago   Exited (127) 50 seconds ago             [Container_Name]
 ```
-- sudo docker start [Container_Name]
+2. sudo docker start [Container_Name]
 
-- sudo docker attach [Container_Name] to obtain a Docker shell
+3. sudo docker attach [Container_Name] to obtain a Docker shell
 
 ### Web Ansible YAML Playbook 
-Create a YAML playbook file that you will use for your configuration. For this project the file is located in /etc/ansible/web_playbook.yml
+Create a YAML playbook configuration file in the ansible container. For this project the file is located in /etc/ansible/ and named web_playbook.yml
   
   ```diff
 ---
@@ -67,7 +64,6 @@ Create a YAML playbook file that you will use for your configuration. For this p
       state: started
       restart_policy: always
       published_ports: 80:80
-```
 
 ```
 Note: Use the Ansible apt module to install docker.io and python3-pip.  Note that update_cache must be used here, or docker.io will not install. 
@@ -76,11 +72,6 @@ Use the Ansible docker-container module to install the cyberxsecurity/dvwa conta
 
 Make sure you publish port 80 on the container to port 80 on the host.
 ```
-
-
-
-
-
 
 Running your playbook should produce an output similar to the following:
 root@1f08425a2967:~# ansible-playbook /etc/ansible/pentest.yml
