@@ -1,74 +1,64 @@
-# Project1
+# Project1 - Web Install
 
 ## Overview
 
-Solution Guide: Ansible Playbooks
-Your task was to create an Ansible playbook that installed Docker and configure a VM with the DVWA web app.
+This procedure is to use Ansible playbook that installs Docker and configures a web VM's with the DVWA web app.
 
+## Prerequistes
 
+The procedure to install Ansible shall be completed and working as per the following document: 
 
-Connect to your jump box, and connect to the Ansible container in the box.
+[Ansible Install Document](Ansible/Ansible_Install.md)
+
+## Procedure
+
+Using gitBash SSH to your jump box, and connect to the Ansible container.
 
 If you stopped your container or exited it in the last activity, find it again using docker container list -a.
 
-root@Red-Team-Web-VM-1:/home/RedAdmin# docker container list -a
-CONTAINER ID        IMAGE                           COMMAND                  CREATED             STATUS                         PORTS               NAMES
-Exited (0) 2 minutes ago                           hardcore_brown
-a0d78be636f7        cyberxsecurity/ansible:latest   "bash"                   3 days ago  
+- sudo docker container list -a to identify the container name.
 
-Start the container again using docker start [container_name].
+```
+CONTAINER ID   IMAGE                          COMMAND                  CREATED       STATUS                        PORTS     NAMES
+d4292e3baeca   cyberxsecurity/dvwa            "/main.sh bash"          12 days ago   Exited (137) 12 days ago                blissful_bell
+3349cfca8742   cyberxsecurity/dvwa            "/main.sh bash"          12 days ago   Exited (0) 12 days ago                  sad_jackson
+35a08e09566c   cyberxsecurity/ansible         "/bin/sh -c /bin/bas…"   12 days ago   Exited (127) 50 seconds ago             elated_ptolemy
+aea2b29112ef   cyberxsecurity/ubuntu:bionic   "bash"                   13 days ago   Exited (0) 12 days ago 
+```
+- sudo docker start [Container_Name]
 
-root@Red-Team-Web-VM-1:/home/RedAdmin# docker start hardcore_brown
-hardcore_brown
+- sudo docker attach [Container_Name] to obtain a Docker shell
 
-Get a shell in your container using docker attach [container_name].
-
-root@Red-Team-Web-VM-1:/home/RedAdmin# docker attach hardcore_brown
-root@1f08425a2967:~#
-
-
-Create a YAML playbook file that you will use for your configuration.
-
-
-root@1f08425a2967:~# nano /etc/ansible/pentest.yml
-The top of your YAML file should read similar to:
+### Web Ansible YAML Playbook 
+Create a YAML playbook file that you will use for your configuration. For this project the file is located in /etc/ansible/web_playbook.yml
+  
+  ```diff
 ---
 - name: Config Web VM with Docker
-    hosts: web
-    become: true
-    tasks:
+  hosts: webservers
+  become: true
+  tasks:
 
+  - name: Uninstall apache2
+    apt:
+      name: apache2
+      state: absent
 
-Use the Ansible apt module to install docker.io and python3-pip:
-Note: update_cache must be used here, or docker.io will not install. (this is the equivalent of running apt update)
   - name: docker.io
     apt:
-  			update_cache: yes
+      update_cache: yes
       name: docker.io
       state: present
 
   - name: Install pip3
     apt:
-      force_apt_get: yes
       name: python3-pip
       state: present
 
-
-Note: update_cache: yes is needed to download and install docker.io
-
-
-Use the Ansible pip module to install docker:
-  - name: Install Python Docker module
+  - name: Install Python Docker Module
     pip:
       name: docker
       state: present
-
-
-Note: Here we are installing the Python Docker Module, so Ansible can then utilize that module to control docker containers. More about the Python Docker Module HERE
-
-Use the Ansible docker-container module to install the cyberxsecurity/dvwa container.
-
-Make sure you publish port 80 on the container to port 80 on the host.
 
   - name: download and launch a docker web container
     docker_container:
@@ -77,52 +67,17 @@ Make sure you publish port 80 on the container to port 80 on the host.
       state: started
       restart_policy: always
       published_ports: 80:80
+```
+
+```
+Note: Use the Ansible apt module to install docker.io and python3-pip.  Note that update_cache must be used here, or docker.io will not install. 
+
+Use the Ansible docker-container module to install the cyberxsecurity/dvwa container.
+
+Make sure you publish port 80 on the container to port 80 on the host.
+```
 
 
-NOTE: restart_policy: always will ensure that the container restarts if you restart your web vm. Without it, you will have to restart your container when you restart the machine.
-You will also need to use the systemd module to restart the docker service when the machine reboots. That block looks like this:
-    - name: Enable docker service
-      systemd:
-        name: docker
-        enabled: yes
-
-
-Run your Ansible playbook on the new virtual machine.
-Your final playbook should read similar to:
----
-- name: Config Web VM with Docker
-  hosts: webservers
-  become: true
-  tasks:
-  - name: docker.io
-    apt:
-      force_apt_get: yes
-      update_cache: yes
-      name: docker.io
-      state: present
-
-  - name: Install pip3
-    apt:
-      force_apt_get: yes
-      name: python3-pip
-      state: present
-
-  - name: Install Docker python module
-    pip:
-      name: docker
-      state: present
-
-  - name: download and launch a docker web container
-    docker_container:
-      name: dvwa
-      image: cyberxsecurity/dvwa
-      state: started
-      published_ports: 80:80
-
-  - name: Enable docker service
-    systemd:
-      name: docker
-      enabled: yes
 
 
 
@@ -130,6 +85,7 @@ Your final playbook should read similar to:
 Running your playbook should produce an output similar to the following:
 root@1f08425a2967:~# ansible-playbook /etc/ansible/pentest.yml
 
+```
 PLAY [Config Web VM with Docker] ***************************************************************
 
 TASK [Gathering Facts] *************************************************************************
@@ -152,7 +108,7 @@ changed: [10.0.0.6]
 PLAY RECAP *************************************************************************************
 10.0.0.6                   : ok=5    changed=4    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
 
-
+```
 
 
 To test that DVWA is running on the new VM, SSH to the new VM from your Ansible container.
@@ -220,7 +176,8 @@ Create a new load balancer in your red team resource group and give it a name.
 
 Add a frontend IP address.
 
-![Front End Adress](diagrams/LB_FE_Address.png)
+![Front End Adress](../Diagrams/LB_FE_Address.png)
+
 
 
 Give the IP address a unique address name. This name will be used to create a URL that maps to the IP address of the load balancer.
@@ -233,6 +190,9 @@ Create a new public IP address.
 
 
 Add a backend pool.
+
+![Front End Adress](../Diagrams/LB_BE_Pool.png)
+
 
 Add your Web VMs to the backend pool.
 
