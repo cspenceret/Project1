@@ -1,205 +1,272 @@
-# Project1
-
+# Project1 - Ansible Install
 ## Overview
 
-
-## Prerequsites
-
-Prior to deploying the ELK Server the ANSIBLE Container must be installed on the Jump Box.  Once completed, perform the following:
-
-- Run Git Bash as administrator
-- SSH to Jump Box in GIT BASH
-- Start the Ansible container  
-- Connect to the Ansible Container
-- Navigate to /etc/ansible
-- Edit ansible.cfg and hosts files, as follows:
-
-### Hosts
- - edit the hosts file and add the following lines:
- 
-```[webservers]```
-
-10.1.0.8 ansible_python_interpreter=/usr/bin/python3
-10.1.0.9 ansible_python_interpreter=/usr/bin/python3
-
-```[elk]```
-10.0.0.4 ansible_python_interpreter=/usr/bin/python3
-
-```[filebeat]```
-127.0.0.1
-
-## Ansible Configuration
+Solution Guide: Containers
+The goal of this activity was to configure your jump box to run Docker containers and to install a container.
 
 
-## Automated ELK Stack Deployment
 
-The files in this repository were used to configure the network depicted below.
+Start by installing docker.io on your Jump box.
 
-## ![TODO: Update the path with the name of your diagram](Diagrams/AzureCloudDiagram2.png)
-
-These files have been tested and used to generate a live ELK deployment on Azure. They can be used to either recreate the entire deployment pictured above. Alternatively, select portions of the Ansible file may be used to install only certain pieces of it, such as Filebeat.
+Run sudo apt update then sudo apt install docker.io
 
 
 
 
-## ELK Server Ansible Playbook
-  ```diff
-  ---
-- name: Configure Elk VM with Docker
-  hosts: elk
-  remote_user: cspencer
-  become: true
-  tasks:
-  # Use apt module
-  - name: Install docker.io
-    apt:
-      update_cache: yes
-      force_apt_get: yes
-      name: docker.io
-      state: present
-   # Use apt module
-  - name: Install python3-pip
-    apt:
-      force_apt_get: yes
-      name: python3-pip
-      state: present
-   # Use pip module (It will default to pip3)
-  - name: Install Docker module
-    pip:
-      name: docker
-      state: present
-   # Use command module
-  - name: Increase virtual memory
-    command: sysctl -w vm.max_map_count=262144
-   # Use sysctl module
-  - name: Use more memory
-    sysctl:
-     name: vm.max_map_count
-     value: 262144
-     state: present
-     reload: yes
-   # Use docker_container module
-  - name: download and launch a docker elk container
-    docker_container:
-      name: elk
-      image: sebp/elk:761
-      state: started
-      restart_policy: always
-    # Please list the ports that ELK runs on
-      published_ports:
-      - 5601:5601
-      - 9200:9200
-      - 5044:5044
-   # Use systemd module
-  - name: Enable service docker on boot
-    systemd:
-      name: docker
-      enabled: yes
-```
-This document contains the following details:
-- Description of the Topology
-- Access Policies
-- ELK Configuration
-  - Beats in Use
-  - Machines Being Monitored
-- How to Use the Ansible Build
+Verify that the Docker service is running.
 
 
-### Description of the Topology
+Run sudo systemctl status docker
 
-The main purpose of this network is to expose a load-balanced and monitored instance of DVWA, the D*mn Vulnerable Web Application.
 
-Load balancing ensures that the application will be highly ```Available```, in addition to restricting ```Access``` to the network.
-- _TODO: What aspect of security do load balancers protect? What is the advantage of a jump box?_
+Note: If the Docker service is not running, start it with sudo systemctl start docker.
 
-Integrating an ELK server allows users to easily monitor the vulnerable VMs for changes to the _____ and system _____.
-- ```Filebeat monitors system logs```
-- ```Metricbeat monitors and reports on system metrics```
 
-The configuration details of each machine may be found below.
-_Note: Use the [Markdown Table Generator](http://www.tablesgenerator.com/markdown_tables) to add/remove values from the table_.
 
-| Name    | Function   | IP Address | Operating System |
-|---------|------------|------------|------------------|
-| Jumpbox | Jump Host  | 10.1.0.4   | Linux            |
-| web-1   | Web Server | 10.1.0.8   | Linux            |
-| web-2   | Web Server | 10.1.0.9   | Linux            |
-| ELK     | ELK Server | 10.0.0.4   | Linux            |
 
-### Access Policies
 
-The machines on the internal network are not exposed to the public Internet.  This is achieved by ensuring the internal network is on its own private subnet and also the Network Security Group denys ALL except for SSH and one addressable workstaion with http allow. 
+Once Docker is installed, pull the container cyberxsecurity/ansible.
 
-Only the _____ machine can accept connections from the Internet. Access to this machine is only allowed from the following IP addresses:
-- _TODO: Add whitelisted IP addresses_
 
-Machines within the network can only be accessed by _____.
-- _TODO: Which machine did you allow to access your ELK VM? What was its IP address?_
+Run sudo docker pull cyberxsecurity/ansible.
 
-A summary of the access policies in place can be found in the table below.
 
-| Name |  Publicly Accessible   | Allowed IP Addresses | Control |
-|---|---|---|---|
-| Jump Box  internal | No | 10.1.0.4 | Security Group Policy and SSH |
-| Jump Box Public | Yes | 1.123.42.152 | Security Group Policy and SSH |
-| HTTP | Yes | 1.123.42.152 | Security Group Policy |
-| ELK | No | 10.0.0.0/24 | Security Group Policy and SSH |
-| ELK Public - Kabana | Yes | 1.123.42.152 | Security Group Policy and Port 5601 allow |
+You can also switch to the root user so you don't have to keep typing sudo.
+
+
+Run sudo su.
+
+
+
+
+Launch the Ansible container and connect to it using the appropriate Docker commands.
+
+
+Run docker run -ti cyberxsecurity/ansible:latest bash to start the container.
+
+
+Run exit to quit.
+## Provisioners
+
+Solution Guide: Provisioners
+In this activity, you launched a new VM from the Azure portal that could only be accessed using a new SSH key from the container running inside your jump box.
+
+
+
+Connect to your Ansible container. Once you're connected, create a new SSH key and copy the public key.
+
+
+Run sudo docker container list -a to find your image.
+
+
+Run docker run -it cyberxsecurity/ansible /bin/bash to start your container and connect to it. (Note that the prompt changes.)
+root@Red-Team-Web-VM-1:/home/RedAdmin# docker run -it cyberxsecurity/ansible /bin/bash
+root@23b86e1d62ad:~#
+
+
+Run ssh-keygen to create an SSH key.
+root@23b86e1d62ad:~# ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key (/root/.ssh/id_rsa):
+Created directory '/root/.ssh'.
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /root/.ssh/id_rsa.
+Your public key has been saved in /root/.ssh/id_rsa.pub.
+The key fingerprint is:
+SHA256:gzoKliTqbxvTFhrNU7ZwUHEx7xAA7MBPS2Wq3HdJ6rw root@23b86e1d62ad
+The key's randomart image is:
++---[RSA 2048]----+
+|  . .o+*o=.      |
+|   o ++ . +      |
+|    *o.+ o .     |
+|  . =+=.+ +      |
+|.. + *.+So .     |
+|+ . +.* ..       |
+|oo +oo o         |
+|o. o+.  .        |
+| .+o.  E         |
++----[SHA256]-----+
+root@23b86e1d62ad:~#
+
+
+Run ls .ssh/ to view your keys.
+root@23b86e1d62ad:~# ls .ssh/
+id_rsa  id_rsa.pub
+
+
+Run cat .ssh/id_rsa.pub to display your public key.
+root@23b86e1d62ad:~# cat .ssh/id_rsa.pub
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDz5KX3urPPKbYRKS3J06wyw5Xj4eZRQTcg6u2LpnSsXwPWYBpCdF5lE3tJlbp7AsnXlXpq2G0oAy5dcLJX2anpfaEBTEvZ0mFBS24AdNnF3ptan5SmEM/
+
+
+Copy your public key string.
+
+
+
+
+Return to the Azure portal and locate one of your web-vm's details page.
+ - Reset your Vm's password and use your container's new public key for the SSH user.
+
+Get the internal IP for your new VM from the Details page.
 
 
 
 
 
 
-### Elk Configuration
+After your VM launches, test your connection using ssh from your jump box Ansible container.
 
-Ansible was used to automate configuration of the ELK machine. No configuration was performed manually, which is advantageous because...
-- _TODO: What is the main advantage of automating configuration with Ansible?_
+Note: If only TCP connections are enabled for SSH in your security group rule, ICMP packets will not be allowed, so you will not be able to use ping.
 
-The playbook implements the following tasks:
-- _TODO: In 3-5 bullets, explain the steps of the ELK installation play. E.g., install Docker; download image; etc._
-- Install Docker.io
-- Install Python PIP-3
-- Install
-- Increase Memory
-- Download and install ELK container sebp/elk:761
-- Publish elk ports
-      - 5601:5601
-      - 9200:9200
-      - 5044:5044
-   # Use systemd module
-  - name: Enable service docker on boot
-    systemd:
-      name: docker
-      enabled: yes
+root@23b86e1d62ad:~# ping 10.0.0.6
+PING 10.0.0.6 (10.0.0.6) 56(84) bytes of data.
+^C
+--- 10.0.0.6 ping statistics ---
+4 packets transmitted, 0 received, 100% packet loss, time 3062ms
 
-The following screenshot displays the result of running `docker ps` after successfully configuring the ELK instance.
+root@23b86e1d62ad:~#
+root@23b86e1d62ad:~# ssh ansible@10.0.0.6
+The authenticity of host '10.0.0.6 (10.0.0.6)' can't be established.
+ECDSA key fingerprint is SHA256:7Wd1cStyhq5HihBf+7TQgjIQe2uHP6arx2qZ1YrPAP4.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '10.0.0.6' (ECDSA) to the list of known hosts.
+Welcome to Ubuntu 18.04.3 LTS (GNU/Linux 5.0.0-1027-azure x86_64)
 
-![TODO: Update the path with the name of your screenshot of docker ps output](Images/docker_ps_output.png)
+* Documentation:  https://help.ubuntu.com
+* Management:     https://landscape.canonical.com
+* Support:        https://ubuntu.com/advantage
 
-### Target Machines & Beats
-This ELK server is configured to monitor the following machines:
-```
-- web-1 10.1.0.8
-- web-2 10.1.0.9
-```
-We have installed the following Beats on these machines:
-- _TODO: Specify which Beats you successfully installed_
+System information as of Mon Jan  6 18:49:56 UTC 2020
 
-These Beats allow us to collect the following information from each machine:
-- _TODO: In 1-2 sentences, explain what kind of data each beat collects, and provide 1 example of what you expect to see. E.g., `Winlogbeat` collects Windows logs, which we use to track user logon events, etc._
+System load:  0.01              Processes:           108
+Usage of /:   4.1% of 28.90GB   Users logged in:     0
+Memory usage: 36%               IP address for eth0: 10.0.0.6
+Swap usage:   0%
 
-### Using the Playbook
-In order to use the playbook, you will need to have an Ansible control node already configured. Assuming you have such a control node provisioned: 
 
-SSH into the control node and follow the steps below:
-- Copy the _____ file to _____.
-- Update the _____ file to include...
-- Run the playbook, and navigate to ____ to check that the installation worked as expected.
+0 packages can be updated.
+0 updates are security updates.
 
-_TODO: Answer the following questions to fill in the blanks:_
-- _Which file is the playbook? Where do you copy it?_
-- _Which file do you update to make Ansible run the playbook on a specific machine? How do I specify which machine to install the ELK server on versus which to install Filebeat on?_
-- _Which URL do you navigate to in order to check that the ELK server is running?
 
-_As a **Bonus**, provide the specific commands the user will need to run to download the playbook, update the files, etc._
+Last login: Mon Jan  6 18:33:30 2020 from 10.0.0.4
+To run a command as administrator (user "root"), use "sudo <command>".
+See "man sudo_root" for details.
+
+ansible@Pentest-1:~$
+
+Exit this SSH session by running exit.
+
+
+
+Locate the Ansible config file and hosts file.
+root@1f08425a2967:~# ls /etc/ansible/
+ansible.cfg  hosts  roles
+
+
+Add this machine's internal IP address to the Ansible hosts file.
+
+
+Open the file with nano /etc/ansible/hosts.
+
+
+Uncomment the [webservers] header line.
+
+
+Add the internal IP address under the [webservers] header.
+
+Add the python line: ansible_python_interpreter=/usr/bin/python3 besides each IP.
+
+
+
+    # This is the default ansible 'hosts' file.
+    #
+    # It should live in /etc/ansible/hosts
+    #
+    #   - Comments begin with the '#' character
+    #   - Blank lines are ignored
+    #   - Groups of hosts are delimited by [header] elements
+    #   - You can enter hostnames or ip addresses
+    #   - A hostname/ip can be a member of multiple groups
+    # Ex 1: Ungrouped hosts, specify before any group headers.
+
+    ## green.example.com
+    ## blue.example.com
+    ## 192.168.100.1
+    ## 192.168.100.10
+
+    # Ex 2: A collection of hosts belonging to the 'webservers' group
+
+    [webservers]
+    ## alpha.example.org
+    ## beta.example.org
+    ## 192.168.1.100
+    ## 192.168.1.110
+    10.0.0.6 ansible_python_interpreter=/usr/bin/python3
+			10.0.0.7 ansible_python_interpreter=/usr/bin/python3
+    ```
+
+
+
+Change the Ansible configuration file to use your administrator account for SSH connections.
+
+
+Open the file with nano /etc/ansible/ansible.cfg and scroll down to the remote_user option.
+
+
+Uncomment the remote_user line and replace root with your admin username using this format:
+- remote_user = <user-name-for-web-VMs>
+
+
+Example:
+# What flags to pass to sudo
+# WARNING: leaving out the defaults might create unexpected behaviours
+#sudo_flags = -H -S -n
+
+# SSH timeout
+#timeout = 10
+
+# default user to use for playbooks if user is not specified
+# (/usr/bin/ansible will use current user as default)
+remote_user = sysadmin
+
+# logging is off by default unless this path is defined
+# if so defined, consider logrotate
+#log_path = /var/log/ansible.log
+
+# default module name for /usr/bin/ansible
+#module_name = command
+
+
+
+Test an Ansible connection using the appropriate Ansible command.
+
+
+If you used ansible_python_interpreter=/usr/bin/python3 your output should look like:
+10.0.0.5 | SUCCESS => {
+"changed": false, 
+"ping": "pong"
+}
+10.0.0.6 | SUCCESS => {
+		"changed": false, 
+		"ping": "pong"
+}
+If that line isn't present, you will get a warning like this:
+root@1f08425a2967:~# ansible all -m ping
+[DEPRECATION WARNING]: Distribution Ubuntu 18.04 on host 10.0.0.6 should use 
+/usr/bin/python3, but is using /usr/bin/python for backward compatibility with 
+prior Ansible releases. A future Ansible release will default to using the 
+discovered platform python for this host. See https://docs.ansible.com/ansible/
+2.9/reference_appendices/interpreter_discovery.html for more information. This 
+feature will be removed in version 2.12. Deprecation warnings can be disabled 
+by setting deprecation_warnings=False in ansible.cfg.
+10.0.0.6 | SUCCESS => {
+		"ansible_facts": {
+				"discovered_interpreter_python": "/usr/bin/python"
+		}, 
+		"changed": false, 
+		"ping": "pong"
+}
+
+
+

@@ -10,7 +10,7 @@ The procedure to install Ansible shall be completed and working as per the follo
 
 [Ansible Install Document](Ansible/Ansible_Install.md)
 
-Key to this is that the Ansible hosts files contains the IP addresses of the web servers unter the tag [webservers].
+Key to this is that the Ansible hosts files contains the IP addresses of the web servers are configured under the tag [webservers].
 
 ## Procedure
 
