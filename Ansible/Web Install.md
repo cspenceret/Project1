@@ -187,3 +187,94 @@ Add a backend pool and add the web VM's.
 
 ![Front End Adress](/Diagrams/LB_BE_Pool.png)
 
+### filebeat
+``` 
+---
+- name: installing and launching filebeat
+  hosts: webservers
+  become: yes
+  tasks:
+
+    - name: download filebeat deb
+      command: curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.6.1-amd64.deb
+      
+    - name: install filebeat deb
+      command: sudo dpkg -i filebeat-7.6.1-amd64.deb
+
+    - name: Copy yml config to elk server
+      copy:
+        src: /etc/ansible/files/filebeat-config.yml
+        dest: /etc/filebeat/filebeat.yml
+
+    - name: enable and configure system module
+      command: filebeat modules enable system
+      
+    - name: setup filebeat
+      command: filebeat setup
+
+    - name: start filebeat service
+      command:  service filebeat start
+
+    - name: enable service filebeat on boot
+      systemd:
+        name: filebeat
+        enabled: yes
+```
+
+
+### Metricbeat
+
+- Config file - Add the ELK server internal IP Address to the Kibana endpoint configuration and the Elasticsearch ouput.
+```
+# Starting with Beats version 6.0.0, the dashboards are loaded via the Kibana API.
+# This requires a Kibana endpoint configuration.
+setup.kibana:
+  host: "10.0.0.4:5601"
+
+  #-------------------------- Elasticsearch output ------------------------------
+output.elasticsearch:
+  # Array of hosts to connect to.
+  hosts: ["10.0.0.4:9200"]
+  username: "elastic"
+  password: "changeme"
+```
+- Ansible File
+
+```
+---
+- name: installing and launching metricbeat
+  hosts: webservers
+  become: yes
+  tasks:
+
+    - name: download metricbeat deb
+      command: curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-7.4.0-amd64.deb
+      
+    - name: install metricbeat deb
+      command: sudo dpkg -i metricbeat-7.4.0-amd64.deb
+
+    - name: Copy yml config
+      copy:
+        src: /etc/ansible/roles/metricbeat-config.yml
+        dest: /etc/metricbeat/metricbeat.yml
+
+    - name: setup metricbeat
+      command: metricbeat setup
+
+    - name: enable and configure system module
+      command: metricbeat modules enable docker
+      #systemd: filebeatservice
+      #become: true
+
+    - name: setup metricbeat
+      command: metricbeat setup
+
+    - name: start metricbeat service
+      command: systemctl start metricbeat
+
+    - name: enable service metricbeat on boot
+      systemd:
+        name: metricbeat
+        enabled: yes
+
+```

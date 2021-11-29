@@ -118,8 +118,7 @@ Integrating an ELK server allows users to easily monitor the vulnerable VMs for 
 - ```Filebeat monitors system logs```
 - ```Metricbeat monitors and reports on system metrics```
 
-The configuration details of each machine may be found below.
-_Note: Use the [Markdown Table Generator](http://www.tablesgenerator.com/markdown_tables) to add/remove values from the table_.
+Servers associated with this cloud network.
 
 | Name    | Function   | IP Address | Operating System |
 |---------|------------|------------|------------------|
@@ -149,10 +148,6 @@ A summary of the access policies in place can be found in the table below.
 | ELK Public - Kabana | Yes | 1.123.42.152 | Security Group Policy and Port 5601 allow |
 
 
-
-
-
-
 ### Elk Configuration
 
 Ansible was used to automate configuration of the ELK machine. No configuration was performed manually, which is advantageous because...
@@ -177,7 +172,7 @@ The playbook implements the following tasks:
 
 The following screenshot displays the result of running `docker ps` after successfully configuring the ELK instance.
 
-![TODO: Update the path with the name of your screenshot of docker ps output](Images/docker_ps_output.png)
+![](Diagrams/dockerPS.png)
 
 ### Target Machines & Beats
 This ELK server is configured to monitor the following machines:
@@ -186,102 +181,15 @@ This ELK server is configured to monitor the following machines:
 - web-2 10.1.0.9
 ```
 We have installed the following Beats on these machines:
-- _TODO: Specify which Beats you successfully installed_
-
-### filebeat
-``` 
----
-- name: installing and launching filebeat
-  hosts: webservers
-  become: yes
-  tasks:
-
-    - name: download filebeat deb
-      command: curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.6.1-amd64.deb
-      
-    - name: install filebeat deb
-      command: sudo dpkg -i filebeat-7.6.1-amd64.deb
-
-    - name: Copy yml config to elk server
-      copy:
-        src: /etc/ansible/files/filebeat-config.yml
-        dest: /etc/filebeat/filebeat.yml
-
-    - name: enable and configure system module
-      command: filebeat modules enable system
-      
-    - name: setup filebeat
-      command: filebeat setup
-
-    - name: start filebeat service
-      command:  service filebeat start
-
-    - name: enable service filebeat on boot
-      systemd:
-        name: filebeat
-        enabled: yes
-```
-
-
-### Metricbeat
-
-- Config file - Add the ELK server internal IP Address to the Kibana endpoint configuration and the Elasticsearch ouput.
-```
-# Starting with Beats version 6.0.0, the dashboards are loaded via the Kibana API.
-# This requires a Kibana endpoint configuration.
-setup.kibana:
-  host: "10.0.0.4:5601"
-
-  #-------------------------- Elasticsearch output ------------------------------
-output.elasticsearch:
-  # Array of hosts to connect to.
-  hosts: ["10.0.0.4:9200"]
-  username: "elastic"
-  password: "changeme"
-```
-- Ansible File
-
-```
----
-- name: installing and launching metricbeat
-  hosts: webservers
-  become: yes
-  tasks:
-
-    - name: download metricbeat deb
-      command: curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-7.4.0-amd64.deb
-      
-    - name: install metricbeat deb
-      command: sudo dpkg -i metricbeat-7.4.0-amd64.deb
-
-    - name: Copy yml config
-      copy:
-        src: /etc/ansible/roles/metricbeat-config.yml
-        dest: /etc/metricbeat/metricbeat.yml
-
-    - name: setup metricbeat
-      command: metricbeat setup
-
-    - name: enable and configure system module
-      command: metricbeat modules enable docker
-      #systemd: filebeatservice
-      #become: true
-
-    - name: setup metricbeat
-      command: metricbeat setup
-
-    - name: start metricbeat service
-      command: systemctl start metricbeat
-
-    - name: enable service metricbeat on boot
-      systemd:
-        name: metricbeat
-        enabled: yes
-
-```
+- Filebeat
+- Metricbeat
 
 These Beats allow us to collect the following information from each machine:
 - _TODO: In 1-2 sentences, explain what kind of data each beat collects, and provide 1 example of what you expect to see. E.g., `Winlogbeat` collects Windows logs, which we use to track user logon events, etc._
+
+![](../Diagrams/kibana_filebeat.png)
+
+![](../Diagrams/kibana_metricbeat.png)
 
 ### Using the Playbook
 In order to use the playbook, you will need to have an Ansible control node already configured. Assuming you have such a control node provisioned: 
