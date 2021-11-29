@@ -5,152 +5,65 @@ This procedure installs Docker and Ansible on the Jump Box.
 
 ## Procedure
 
-- Run sudo apt update 
+- sudo apt update 
 - sudo apt install docker.io
-- Run sudo systemctl status docker to check docker is running  If not run sudo systemctl start docker.
+- sudo systemctl status docker to check docker is running  If not run sudo systemctl start docker.
 
-- Run sudo docker pull cyberxsecurity/ansible.
+- sudo docker pull cyberxsecurity/ansible.
 
-- Run -ti cyberxsecurity/ansible:latest bash to start the container.
+- docker run -it cyberxsecurity/ansible /bin/bash
 
 - Run exit to quit.
 
 
 ## Provisioners
 
-Solution Guide: Provisioners
-In this activity, you launched a new VM from the Azure portal that could only be accessed using a new SSH key from the container running inside your jump box.
-
-
-
 Connect to your Ansible container. Once you're connected, create a new SSH key and copy the public key.
 
-
-Run sudo docker container list -a to find your image.
-
-
-Run docker run -it cyberxsecurity/ansible /bin/bash to start your container and connect to it. (Note that the prompt changes.)
-root@Red-Team-Web-VM-1:/home/RedAdmin# docker run -it cyberxsecurity/ansible /bin/bash
-root@23b86e1d62ad:~#
-
-
-Run ssh-keygen to create an SSH key.
-root@23b86e1d62ad:~# ssh-keygen
-Generating public/private rsa key pair.
-Enter file in which to save the key (/root/.ssh/id_rsa):
-Created directory '/root/.ssh'.
-Enter passphrase (empty for no passphrase):
-Enter same passphrase again:
-Your identification has been saved in /root/.ssh/id_rsa.
-Your public key has been saved in /root/.ssh/id_rsa.pub.
-The key fingerprint is:
-SHA256:gzoKliTqbxvTFhrNU7ZwUHEx7xAA7MBPS2Wq3HdJ6rw root@23b86e1d62ad
-The key's randomart image is:
-+---[RSA 2048]----+
-|  . .o+*o=.      |
-|   o ++ . +      |
-|    *o.+ o .     |
-|  . =+=.+ +      |
-|.. + *.+So .     |
-|+ . +.* ..       |
-|oo +oo o         |
-|o. o+.  .        |
-| .+o.  E         |
-+----[SHA256]-----+
-root@23b86e1d62ad:~#
-
-
-Run ls .ssh/ to view your keys.
-root@23b86e1d62ad:~# ls .ssh/
-id_rsa  id_rsa.pub
-
-
-Run cat .ssh/id_rsa.pub to display your public key.
-root@23b86e1d62ad:~# cat .ssh/id_rsa.pub
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDz5KX3urPPKbYRKS3J06wyw5Xj4eZRQTcg6u2LpnSsXwPWYBpCdF5lE3tJlbp7AsnXlXpq2G0oAy5dcLJX2anpfaEBTEvZ0mFBS24AdNnF3ptan5SmEM/
-
-
-Copy your public key string.
-
-
-
+- sudo docker start [container_name]
+- sudo docker attach [container_name]
+- Now connected to ansible container shell.
+- Run ssh-keygen to create an SSH key.
+- Run cat .ssh/id_rsa.pub to display your public key.
+- Copy public key string.
 
 Return to the Azure portal and locate one of your web-vm's details page.
- - Reset your Vm's password and use your container's new public key for the SSH user.
+ - Reset your Vm's password and use your container's new public key for the SSH user.  See Diagram below.
 
  ![Web SSH Reset Password](/Diagrams/WebSSH.png)
 
-Get the internal IP for your new VM from the Details page.
+- Note the internal IP for your new VM from the Details page and test SSH connection to each web server.
 
-
-
-
-
-
-After your VM launches, test your connection using ssh from your jump box Ansible container.
-
-Note: If only TCP connections are enabled for SSH in your security group rule, ICMP packets will not be allowed, so you will not be able to use ping.
-
-root@23b86e1d62ad:~# ping 10.0.0.6
-PING 10.0.0.6 (10.0.0.6) 56(84) bytes of data.
-^C
---- 10.0.0.6 ping statistics ---
-4 packets transmitted, 0 received, 100% packet loss, time 3062ms
-
-root@23b86e1d62ad:~#
-root@23b86e1d62ad:~# ssh ansible@10.0.0.6
-The authenticity of host '10.0.0.6 (10.0.0.6)' can't be established.
-ECDSA key fingerprint is SHA256:7Wd1cStyhq5HihBf+7TQgjIQe2uHP6arx2qZ1YrPAP4.
-Are you sure you want to continue connecting (yes/no)? yes
-Warning: Permanently added '10.0.0.6' (ECDSA) to the list of known hosts.
+```
 Welcome to Ubuntu 18.04.3 LTS (GNU/Linux 5.0.0-1027-azure x86_64)
 
 * Documentation:  https://help.ubuntu.com
 * Management:     https://landscape.canonical.com
 * Support:        https://ubuntu.com/advantage
 
-System information as of Mon Jan  6 18:49:56 UTC 2020
+System information as of [date]
 
 System load:  0.01              Processes:           108
 Usage of /:   4.1% of 28.90GB   Users logged in:     0
-Memory usage: 36%               IP address for eth0: 10.0.0.6
+Memory usage: 36%               IP address for eth0: 10.1.0.8
 Swap usage:   0%
 
 
 0 packages can be updated.
 0 updates are security updates.
+```
+- Exit this SSH session by typing exit.
 
+## Ansible Configuration Files
 
-Last login: Mon Jan  6 18:33:30 2020 from 10.0.0.4
-To run a command as administrator (user "root"), use "sudo <command>".
-See "man sudo_root" for details.
+## Hosts 
 
-ansible@Pentest-1:~$
+- goto /etc/ansible
+- nano hosts
+- Uncomment the [webservers] header line.
+- Add webserver internal IP Address and python line , for example 10.1.0.8 ansible_python_interpreter=/usr/bin/python3
 
-Exit this SSH session by running exit.
-
-
-
-Locate the Ansible config file and hosts file.
-root@1f08425a2967:~# ls /etc/ansible/
-ansible.cfg  hosts  roles
-
-
-Add this machine's internal IP address to the Ansible hosts file.
-
-
-Open the file with nano /etc/ansible/hosts.
-
-
-Uncomment the [webservers] header line.
-
-
-Add the internal IP address under the [webservers] header.
-
-Add the python line: ansible_python_interpreter=/usr/bin/python3 besides each IP.
-
-
-
+```
     # This is the default ansible 'hosts' file.
     #
     # It should live in /etc/ansible/hosts
@@ -174,21 +87,18 @@ Add the python line: ansible_python_interpreter=/usr/bin/python3 besides each IP
     ## beta.example.org
     ## 192.168.1.100
     ## 192.168.1.110
-    10.0.0.6 ansible_python_interpreter=/usr/bin/python3
-			10.0.0.7 ansible_python_interpreter=/usr/bin/python3
-    ```
+    10.1.0.8 ansible_python_interpreter=/usr/bin/python3
+	10.1.0.9 ansible_python_interpreter=/usr/bin/python3
 
-
+```
+### ansible.cfg
 
 Change the Ansible configuration file to use your administrator account for SSH connections.
 
-
-Open the file with nano /etc/ansible/ansible.cfg and scroll down to the remote_user option.
-
-
-Uncomment the remote_user line and replace root with your admin username using this format:
+- nano /etc/ansible/ansible.cfg and scroll down to the remote_user option.
+- Uncomment the remote_user line and replace root with your admin username using this format:
 - remote_user = <user-name-for-web-VMs>
-
+```
 
 Example:
 # What flags to pass to sudo
@@ -209,33 +119,17 @@ remote_user = sysadmin
 # default module name for /usr/bin/ansible
 #module_name = command
 
+```
+- save file
+- ansible all -m ping
 
 
-Test an Ansible connection using the appropriate Ansible command.
-
-
-If you used ansible_python_interpreter=/usr/bin/python3 your output should look like:
-10.0.0.5 | SUCCESS => {
+Your output should look like:
+10.1.0.8 | SUCCESS => {
 "changed": false, 
 "ping": "pong"
 }
 10.0.0.6 | SUCCESS => {
-		"changed": false, 
-		"ping": "pong"
-}
-If that line isn't present, you will get a warning like this:
-root@1f08425a2967:~# ansible all -m ping
-[DEPRECATION WARNING]: Distribution Ubuntu 18.04 on host 10.0.0.6 should use 
-/usr/bin/python3, but is using /usr/bin/python for backward compatibility with 
-prior Ansible releases. A future Ansible release will default to using the 
-discovered platform python for this host. See https://docs.ansible.com/ansible/
-2.9/reference_appendices/interpreter_discovery.html for more information. This 
-feature will be removed in version 2.12. Deprecation warnings can be disabled 
-by setting deprecation_warnings=False in ansible.cfg.
-10.0.0.6 | SUCCESS => {
-		"ansible_facts": {
-				"discovered_interpreter_python": "/usr/bin/python"
-		}, 
 		"changed": false, 
 		"ping": "pong"
 }
