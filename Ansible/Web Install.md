@@ -174,16 +174,16 @@ Install a load balancer in front of the web VM's to distribute the traffic among
 
 Create a new load balancer in your red team resource group and give it a name.
 
-![Load balancer](/Diagrams/Loadbalancer.png)
+![Load balancer](../Diagrams/Loadbalancer.png)
 
 
 Add a frontend IP address.
 
-![Front End Adress](/Diagrams/LB_FE_Address.png)
+![Front End Adress](../Diagrams/LB_FE_Address.png)
 
 Create a new public IP address.
 
 Add a backend pool and add the web VM's.
 
-![Front End Adress](/Diagrams/LB_BE_Pool.png)
+![Front End Adress](../Diagrams/LB_BE_Pool.png)
 
