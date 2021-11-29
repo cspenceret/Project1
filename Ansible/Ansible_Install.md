@@ -15,6 +15,10 @@ This procedure installs Docker and Ansible on the Jump Box.
 
 - Run exit to quit.
 
+- Add a SSH allow from Jump box to virtual Network
+
+![SecGpSSH](/Diagrams/SecGpSSH.png)
+
 
 ## Provisioners
 
