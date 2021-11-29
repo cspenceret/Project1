@@ -1,51 +1,21 @@
 # Project1 - Ansible Install
 ## Overview
 
-Solution Guide: Containers
-The goal of this activity was to configure your jump box to run Docker containers and to install a container.
+This procedure installs Docker and Ansible on the Jump Box.
+
+## Procedure
+
+- Run sudo apt update 
+- sudo apt install docker.io
+- Run sudo systemctl status docker to check docker is running  If not run sudo systemctl start docker.
+
+- Run sudo docker pull cyberxsecurity/ansible.
+
+- Run -ti cyberxsecurity/ansible:latest bash to start the container.
+
+- Run exit to quit.
 
 
-
-Start by installing docker.io on your Jump box.
-
-Run sudo apt update then sudo apt install docker.io
-
-
-
-
-Verify that the Docker service is running.
-
-
-Run sudo systemctl status docker
-
-
-Note: If the Docker service is not running, start it with sudo systemctl start docker.
-
-
-
-
-
-Once Docker is installed, pull the container cyberxsecurity/ansible.
-
-
-Run sudo docker pull cyberxsecurity/ansible.
-
-
-You can also switch to the root user so you don't have to keep typing sudo.
-
-
-Run sudo su.
-
-
-
-
-Launch the Ansible container and connect to it using the appropriate Docker commands.
-
-
-Run docker run -ti cyberxsecurity/ansible:latest bash to start the container.
-
-
-Run exit to quit.
 ## Provisioners
 
 Solution Guide: Provisioners
@@ -107,6 +77,8 @@ Copy your public key string.
 
 Return to the Azure portal and locate one of your web-vm's details page.
  - Reset your Vm's password and use your container's new public key for the SSH user.
+
+ ![Web SSH Reset Password](/Diagrams/WebSSH.png)
 
 Get the internal IP for your new VM from the Details page.
 
