@@ -114,7 +114,7 @@ Example:
 
 # default user to use for playbooks if user is not specified
 # (/usr/bin/ansible will use current user as default)
-remote_user = sysadmin
+remote_user = [sysadmin]
 
 # logging is off by default unless this path is defined
 # if so defined, consider logrotate
@@ -127,7 +127,7 @@ remote_user = sysadmin
 - save file
 - ansible all -m ping
 
-
+```
 Your output should look like:
 10.1.0.8 | SUCCESS => {
 "changed": false, 
@@ -137,6 +137,6 @@ Your output should look like:
 		"changed": false, 
 		"ping": "pong"
 }
-
+```
 
 
