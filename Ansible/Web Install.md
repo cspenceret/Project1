@@ -8,7 +8,9 @@ This procedure is to use Ansible playbook that installs Docker and configures we
 
 The procedure to install Ansible shall be completed and working as per the following document: 
 
-[Ansible Install Document](Ansible/Ansible_Install.md)
+[Ansible Install Document](../Ansible/Ansible_Install.md)
+
+Create two web virtual machines and ensure they are allocated to an Availability Set eg WEB-Avail-Set
 
 Key to this is that the Ansible hosts files contains the IP addresses of the web servers are configured under the tag [webservers].
 
@@ -30,6 +32,8 @@ You are now connected to the Ansible Container shell.
 
 ### Web Ansible YAML Playbook 
 Create a YAML playbook configuration file in the ansible container. For this project the file is located in /etc/ansible/ and named web_playbook.yml
+
+Note that the inbound and outbound port 80:80 should be set in the DVWA Ansible configuration.
   
   ```diff
 ---
@@ -76,7 +80,7 @@ Make sure you publish port 80 on the container to port 80 on the host.
 ```
 
 Running your playbook should produce an output similar to the following:
-root@1f08425a2967:~# ansible-playbook /etc/ansible/pentest.yml
+ansible-playbook /etc/ansible/web_playbook.yml
 
 ```
 PLAY [Config Web VM with Docker] ***************************************************************
