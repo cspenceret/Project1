@@ -18,7 +18,7 @@ Prior to deploying the ELK Server the ANSIBLE Container must be installed on the
 
 Likewise the web servers should be installed
 
-[Web Install](/Ansible/Web-install.md)
+[Web Install](/Ansible/Web-Install.md)
 
 Once completed, perform the following:
 
@@ -53,7 +53,7 @@ Once completed, perform the following:
 
 The files in this repository were used to configure the network depicted below.
 
-![Network Diagram](./Diagrams/AzureCloudDiagram2.png)
+![Network Diagram](./Diagrams/AzureCloudDiagram2.PNG)
 
 These files have been tested and used to generate a live ELK deployment on Azure. They can be used to either recreate the entire deployment pictured above. Alternatively, select portions of the Ansible file may be used to install only certain pieces of it, such as Filebeat.
 
