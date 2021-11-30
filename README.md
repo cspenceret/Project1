@@ -2,13 +2,20 @@
 
 ## Overview
 
+ELK server is a server used for collecting log data.  There are three components which make up the acronym:
+- Elasticsearch - Indexing and storage.
+- Logstack - Data aggregation and processing.
+- Kibana - Analysis and visualisation.
+
+Additionally "Beats" adds data collection capability.  This project has added filebeat and metricbeat to the data collection repository
+
 
 ## Prerequsites
 
 Prior to deploying the ELK Server the ANSIBLE Container must be installed on the Jump Box.  Once completed, perform the following:
 
 - Run Git Bash as administrator
-- SSH to Jump Box in GIT BASH
+- SSH to Jump Box using GIT BASH
 - Start the Ansible container  
 - Connect to the Ansible Container
 - Navigate to /etc/ansible
@@ -184,12 +191,19 @@ We have installed the following Beats on these machines:
 - Filebeat
 - Metricbeat
 
-These Beats allow us to collect the following information from each machine:
-- _TODO: In 1-2 sentences, explain what kind of data each beat collects, and provide 1 example of what you expect to see. E.g., `Winlogbeat` collects Windows logs, which we use to track user logon events, etc._
+These Beats allow us to collect the following information from each machine (see following Kibana samples):
+- filebeat captures log files, such as /etc/passwd file for identifying new users and groups, syslogs.
+- Metricbeat captures system metrics such as memeory usage, CPU usage
 
-![](../Diagrams/kibana_filebeat.png)
+## Filebeat Kibana Display
+#
+![filebeat](Diagrams/kibana-filebeat.png)
 
-![](../Diagrams/kibana_metricbeat.png)
+#
+### Metricbeat Kibana Dispaly
+
+#
+![metricbeat](/Diagrams/kibana-metricbeat.png)
 
 ### Using the Playbook
 In order to use the playbook, you will need to have an Ansible control node already configured. Assuming you have such a control node provisioned: 
