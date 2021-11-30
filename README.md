@@ -12,16 +12,21 @@ Additionally "Beats" adds data collection capability.  This project has added fi
 
 ## Prerequsites
 
-Prior to deploying the ELK Server the ANSIBLE Container must be installed on the Jump Box. 
+Prior to deploying the ELK Server the ANSIBLE Container must be installed on the Jump Box as per the ansible install document. 
 
-![ansible_Install](../Ansible/Ansible_Install.md)
+[ansible_Install](Ansible-Install.md)
+
+Likewise the web servers should be installed
+
+[Web Install](/Ansible/Web-install.md)
 
 Once completed, perform the following:
 
 - Run Git Bash as administrator
-- SSH to Jump Box using GIT BASH
-- Start the Ansible container  
-- Attach to the Ansible Container
+- SSH to Jump Box using GIT BASH - ssh username@jumpbox public IP address
+- sudo docker start [container_name]
+- sudo docker attach [container_name]
+- Now connected to ansible container shell.
 - Navigate to /etc/ansible
 - Edit ansible.cfg and hosts files, as follows:
 ```
